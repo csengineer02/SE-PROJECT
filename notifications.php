@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . '/../includes/auth.php';
-require_login();
+require_once __DIR__ . '/rider_auth.php';
+require_rider_login();
 $title = "Notifications";
 include __DIR__ . '/../includes/dashboard_header.php';
 ?>
@@ -8,7 +8,7 @@ include __DIR__ . '/../includes/dashboard_header.php';
 <div class="d-flex flex-wrap align-items-end justify-content-between gap-3 mb-4">
   <div>
     <h3 class="mb-1"><?= h($title) ?></h3>
-    <div class="text-muted">Central hub for shop updates, orders, alerts, and promotions.</div>
+    <div class="text-muted">Delivery updates and system alerts.</div>
   </div>
   <div class="d-flex gap-2">
     <a class="btn btn-soft" href="#"><i class="bi bi-life-preserver me-1"></i>Help</a>
