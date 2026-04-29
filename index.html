@@ -1,0 +1,991 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Grocer 360</title>
+
+<style>
+:root{
+  --g700:#15803d; --g600:#16a34a; --g500:#22c55e;
+  --bg:#ecfdf5; --muted:#5b6b63;
+  --stroke:#bbf7d0; --shadow:0 22px 55px rgba(34,197,94,.22);
+  --shadow2:0 18px 40px rgba(2,6,23,.08);
+  --r:16px;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family: Arial, sans-serif;
+  background:
+    radial-gradient(circle at 18% 22%, rgba(34,197,94,.22), transparent 42%),
+    radial-gradient(circle at 82% 70%, rgba(16,163,74,.20), transparent 45%),
+    var(--bg);
+  color:#0f172a;
+}
+.wrap{max-width:1200px;margin:0 auto;padding:18px 14px 30px;}
+.hidden{display:none !important}
+
+/* Topbar */
+.topbar{
+  position:sticky; top:0; z-index:10;
+  display:flex; align-items:center; justify-content:space-between;
+  gap:12px; flex-wrap:wrap;
+  background:rgba(255,255,255,.82);
+  backdrop-filter: blur(10px);
+  border:1px solid var(--stroke);
+  border-radius: var(--r);
+  padding:14px 14px;
+  box-shadow: var(--shadow);
+}
+.brand{display:flex; gap:12px; align-items:center;}
+.logo{
+  width:44px;height:44px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-weight:900;
+  background:linear-gradient(135deg,var(--g500),var(--g700));
+  box-shadow:0 12px 24px rgba(34,197,94,.25);
+}
+.brand h1{margin:0;font-size:18px;color:#0b2a17;}
+.brand p{margin:4px 0 0;font-size:13px;color:var(--muted);}
+
+.right{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.select{
+  padding:7px 9px;border-radius:10px;
+  border:1px solid var(--stroke);
+  background:#f0fdf4;color:#166534;font-size:12px;
+}
+.btn{
+  border:0; cursor:pointer;
+  padding:10px 12px;border-radius:12px;font-weight:800;
+}
+.btn-primary{
+  color:#fff;
+  background:linear-gradient(135deg,var(--g500),var(--g700));
+  box-shadow:0 12px 24px rgba(34,197,94,.22);
+}
+.btn-ghost{
+  background:#fff;
+  border:1px solid var(--stroke);
+  color:#14532d;
+}
+.btn:hover{transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
+
+/* Panels */
+.panel{
+  margin-top:14px;
+  background:rgba(255,255,255,.92);
+  border:1px solid var(--stroke);
+  border-radius: var(--r);
+  box-shadow: var(--shadow2);
+  padding:16px;
+}
+
+/* Auth box */
+.authBox{
+  max-width:560px;
+  margin:22px auto 0;
+  padding:18px;
+  background:#fff;
+  border:1px solid var(--stroke);
+  border-radius:18px;
+  box-shadow: var(--shadow);
+}
+.authBrand{
+  text-align:center;
+  font-size:30px;
+  font-weight:900;
+  color:var(--g700);
+}
+.authSub{
+  margin-top:8px;
+  text-align:center;
+  font-size:13px;
+  color:#166534;
+}
+.tabs{
+  display:flex;
+  gap:10px;
+  margin-top:14px;
+}
+.tab{
+  flex:1;
+  padding:10px 12px;
+  border-radius:12px;
+  border:1px solid var(--stroke);
+  background:#f0fdf4;
+  color:#14532d;
+  font-weight:900;
+  cursor:pointer;
+}
+.tab.active{
+  background:linear-gradient(135deg,var(--g500),var(--g700));
+  color:#fff;
+  border:none;
+}
+.field{margin-top:12px;}
+label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
+input, select{
+  width:100%;
+  padding:12px 12px;
+  border-radius:12px;
+  border:1px solid var(--stroke);
+  background:#fff;
+}
+input:focus, select:focus{outline:none; box-shadow:0 0 0 4px rgba(34,197,94,.18);}
+.primaryWide{
+  width:100%;
+  margin-top:14px;
+  padding:12px 14px;
+  border:0;
+  border-radius:12px;
+  cursor:pointer;
+  font-weight:900;
+  color:#fff;
+  background:linear-gradient(135deg,var(--g500),var(--g700));
+  box-shadow:0 12px 24px rgba(34,197,94,.22);
+}
+.msg{
+  margin-top:12px;
+  padding:10px 12px;
+  border-radius:12px;
+  border:1px solid var(--stroke);
+  background:#f0fdf4;
+  color:#14532d;
+  font-size:13px;
+  display:none;
+}
+
+/* Dashboard layout */
+.hero{
+  margin-top:14px;
+  display:grid;
+  grid-template-columns: 1.3fr .7fr;
+  gap:14px;
+}
+@media (max-width: 980px){ .hero{grid-template-columns:1fr;} }
+
+.searchRow{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
+.search{
+  flex:1;
+  min-width:240px;
+  padding:11px 12px;
+  border-radius:14px;
+  border:1px solid var(--stroke);
+  background:#fff;
+}
+.search:focus{outline:none; box-shadow:0 0 0 4px rgba(34,197,94,.18);}
+
+.stats{
+  margin-top:12px;
+  display:grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap:12px;
+}
+@media (max-width:720px){ .stats{grid-template-columns:1fr;} }
+.stat{
+  padding:12px;
+  border-radius:14px;
+  border:1px solid var(--stroke);
+  background: linear-gradient(180deg, #ffffff, #f0fdf4);
+}
+.k{margin:0 0 6px;font-size:12px;color:var(--muted)}
+.v{margin:0;font-size:18px;font-weight:900;color:#052e16}
+
+.sectionTitle{margin:0 0 10px;font-size:15px;color:#0b2a17}
+.grid{
+  margin-top:12px;
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap:12px;
+}
+.tile{
+  position:relative;
+  padding:14px;
+  border-radius:16px;
+  border:1px solid var(--stroke);
+  background:#fff;
+  cursor:pointer;
+  transition:.15s ease;
+  overflow:hidden;
+}
+.tile:before{
+  content:"";
+  position:absolute; inset:-40% -40% auto auto;
+  width:190px; height:190px; border-radius:999px;
+  background: radial-gradient(circle, rgba(34,197,94,.18), transparent 60%);
+}
+.tile:hover{transform:translateY(-2px); box-shadow: var(--shadow);}
+.tile h3{margin:0 0 6px; font-size:15px; position:relative}
+.tile p{margin:0; font-size:13px; color:var(--muted); position:relative}
+.icon{
+  width:34px;height:34px;border-radius:12px;
+  display:inline-flex;align-items:center;justify-content:center;
+  background:#f0fdf4;border:1px solid var(--stroke);
+  margin-bottom:10px; position:relative;
+  color:#14532d; font-weight:900;
+}
+
+.list{display:grid; gap:10px; margin-top:10px}
+.item{
+  display:flex;justify-content:space-between;gap:10px;align-items:flex-start;
+  padding:12px;border-radius:14px;border:1px solid var(--stroke);
+  background:#fff;
+}
+.item b{font-size:13px}
+.item .m{font-size:12px;color:var(--muted);margin-top:4px}
+.badge{
+  font-size:12px;font-weight:900;
+  padding:6px 9px;border-radius:999px;
+  background:#dcfce7;border:1px solid var(--stroke);
+  color:#14532d;
+}
+.footer{ text-align:center;margin-top:16px;font-size:12px;color:var(--muted); }
+</style>
+</head>
+
+<body>
+<div class="wrap">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo">G</div>
+      <div>
+        <h1 id="ui_title">Grocer 360</h1>
+        <p id="ui_sub">One platform for every grocery role 🌿</p>
+      </div>
+    </div>
+
+    <div class="right">
+      <select class="select" id="langSel" onchange="setLanguage(this.value)">
+        <option value="en">English</option>
+        <option value="bn">বাংলা</option>
+      </select>
+
+      <button class="btn btn-ghost" onclick="notify()" id="ui_notify">Notifications</button>
+      <button class="btn btn-primary" onclick="logout()" id="ui_logout">Logout</button>
+    </div>
+  </div>
+
+  <!-- AUTH (LOGIN + SIGNUP) -->
+  <div id="authView" class="panel">
+    <div class="authBox">
+      <div class="authBrand" id="auth_brand">Grocer 360 🥬</div>
+      <div class="authSub" id="auth_sub">Login or create a new account</div>
+
+      <div class="tabs">
+        <button class="tab active" id="tab_login" onclick="switchTab('login')">Login</button>
+        <button class="tab" id="tab_signup" onclick="switchTab('signup')">Sign Up</button>
+      </div>
+
+      <!-- LOGIN FORM -->
+      <div id="loginForm">
+        <div class="field">
+          <label id="lbl_login_phone">Phone</label>
+          <input id="login_phone" placeholder="01XXXXXXXXX" inputmode="tel" />
+        </div>
+
+        <div class="field">
+          <label id="lbl_login_pass">Password</label>
+          <input id="login_pass" type="password" placeholder="Password" />
+        </div>
+
+        <div class="field">
+          <label id="lbl_login_role">Login As</label>
+          <select id="login_role">
+            <option value="">Select Role</option>
+            <option value="shop_owner">Shop Owner</option>
+            <option value="employee">Employee</option>
+            <option value="customer">Customer</option>
+          </select>
+        </div>
+
+        <button class="primaryWide" onclick="login()" id="login_btn">Login</button>
+      </div>
+
+      <!-- SIGNUP FORM -->
+      <div id="signupForm" class="hidden">
+        <div class="field">
+          <label id="lbl_signup_name">Full Name</label>
+          <input id="signup_name" placeholder="Your full name" />
+        </div>
+
+        <div class="field">
+          <label id="lbl_signup_phone">Phone</label>
+          <input id="signup_phone" placeholder="01XXXXXXXXX" inputmode="tel" />
+        </div>
+
+        <div class="field">
+          <label id="lbl_signup_pass">Password</label>
+          <input id="signup_pass" type="password" placeholder="Password" />
+        </div>
+
+        <div class="field">
+          <label id="lbl_signup_role">Register As</label>
+          <select id="signup_role">
+            <option value="">Select Role</option>
+            <option value="shop_owner">Shop Owner</option>
+            <option value="employee">Employee</option>
+            <option value="customer">Customer</option>
+          </select>
+        </div>
+
+        <button class="primaryWide" onclick="signup()" id="signup_btn">Create Account</button>
+      </div>
+
+      <div class="msg" id="auth_msg"></div>
+    </div>
+  </div>
+
+  <!-- SHOP OWNER VIEW -->
+  <div id="shopOwnerView" class="hidden">
+    <div class="hero">
+      <div class="panel">
+        <div class="searchRow">
+          <input id="search_shop" class="search" placeholder="Search actions..." oninput="filterTiles('shop')" />
+          <button class="btn btn-ghost" onclick="clearSearch('shop')" id="shop_clear">Clear</button>
+        </div>
+
+        <div class="stats">
+          <div class="stat"><p class="k" id="shop_s1">Today Sales</p><p class="v">৳ 12,450</p></div>
+          <div class="stat"><p class="k" id="shop_s2">Low Stock Items</p><p class="v">8</p></div>
+          <div class="stat"><p class="k" id="shop_s3">Pending Orders</p><p class="v">3</p></div>
+        </div>
+
+        <div style="margin-top:14px;">
+          <p class="sectionTitle" id="shop_quick">Quick Actions</p>
+          <div class="grid" id="tileGrid_shop">
+            <div class="tile" data-key="products inventory barcode price" onclick="go('Manage Products')">
+              <div class="icon">📦</div><h3 id="shop_p1">Manage Products</h3><p id="shop_p1d">Add/edit items, barcode, price & stock</p>
+            </div>
+            <div class="tile" data-key="categories organize" onclick="go('Categories')">
+              <div class="icon">🗂️</div><h3 id="shop_p2">Categories</h3><p id="shop_p2d">Create & organize product categories</p>
+            </div>
+            <div class="tile" data-key="sales report analytics" onclick="go('Sales Report')">
+              <div class="icon">📈</div><h3 id="shop_p3">Sales Report</h3><p id="shop_p3d">Daily/weekly/monthly sales analytics</p>
+            </div>
+            <div class="tile" data-key="employees staff permissions" onclick="go('Manage Employees')">
+              <div class="icon">👥</div><h3 id="shop_p4">Manage Employees</h3><p id="shop_p4d">Add staff, set permissions & roles</p>
+            </div>
+            <div class="tile" data-key="settings tax invoice" onclick="go('Shop Settings')">
+              <div class="icon">⚙️</div><h3 id="shop_p5">Shop Settings</h3><p id="shop_p5d">Shop info, tax, invoice settings</p>
+            </div>
+            <div class="tile" data-key="pos billing invoice" onclick="go('Open POS')">
+              <div class="icon">🧾</div><h3 id="shop_p6">Open POS</h3><p id="shop_p6d">Start billing with fast checkout</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <p class="sectionTitle" id="shop_tasks">Today’s Tasks</p>
+        <p style="margin:0 0 10px;color:var(--muted);font-size:13px" id="shop_welcome">Welcome, <b id="shop_user"></b></p>
+        <div class="list">
+          <div class="item"><div><b id="shop_t1">Restock low items</b><div class="m" id="shop_t1d">Rice, oil, eggs, milk</div></div><span class="badge" id="shop_b1">Stock</span></div>
+          <div class="item"><div><b id="shop_t2">Verify cash drawer</b><div class="m" id="shop_t2d">End-of-day checking</div></div><span class="badge" id="shop_b2">POS</span></div>
+          <div class="item"><div><b id="shop_t3">Review sales summary</b><div class="m" id="shop_t3d">Compare with yesterday</div></div><span class="badge" id="shop_b3">Report</span></div>
+        </div>
+        <div style="margin-top:12px; display:grid; gap:10px;">
+          <button class="btn btn-ghost" onclick="go('All Orders')" id="shop_orders">View All Orders</button>
+          <button class="btn btn-primary" onclick="go('Add Product')" id="shop_add">+ Add New Product</button>
+        </div>
+      </div>
+    </div>
+    <div class="footer" id="shop_footer">One platform for every grocery role 🌿</div>
+  </div>
+
+  <!-- EMPLOYEE VIEW -->
+  <div id="employeeView" class="hidden">
+    <div class="hero">
+      <div class="panel">
+        <div class="searchRow">
+          <input id="search_emp" class="search" placeholder="Search actions..." oninput="filterTiles('emp')" />
+          <button class="btn btn-ghost" onclick="clearSearch('emp')" id="emp_clear">Clear</button>
+        </div>
+
+        <div class="stats">
+          <div class="stat"><p class="k" id="emp_s1">Today Bills</p><p class="v">21</p></div>
+          <div class="stat"><p class="k" id="emp_s2">Pending Orders</p><p class="v">4</p></div>
+          <div class="stat"><p class="k" id="emp_s3">Low Stock Alerts</p><p class="v">6</p></div>
+        </div>
+
+        <div style="margin-top:14px;">
+          <p class="sectionTitle" id="emp_quick">Quick Actions</p>
+          <div class="grid" id="tileGrid_emp">
+            <div class="tile" data-key="pos billing invoice payment" onclick="go('POS / Billing')">
+              <div class="icon">🧾</div><h3 id="emp_p1">POS / Billing</h3><p id="emp_p1d">Create invoice & take payments</p>
+            </div>
+            <div class="tile" data-key="stock inventory search" onclick="go('Check Stock')">
+              <div class="icon">📦</div><h3 id="emp_p2">Check Stock</h3><p id="emp_p2d">Search and view product stock</p>
+            </div>
+            <div class="tile" data-key="update inventory stock in out" onclick="go('Update Inventory')">
+              <div class="icon">🔄</div><h3 id="emp_p3">Update Inventory</h3><p id="emp_p3d">Stock in/out and adjustments</p>
+            </div>
+            <div class="tile" data-key="orders customer delivery" onclick="go('Customer Orders')">
+              <div class="icon">📥</div><h3 id="emp_p4">Customer Orders</h3><p id="emp_p4d">View and process orders</p>
+            </div>
+            <div class="tile" data-key="return exchange refund" onclick="go('Return & Exchange')">
+              <div class="icon">↩️</div><h3 id="emp_p5">Return & Exchange</h3><p id="emp_p5d">Handle product return/refund</p>
+            </div>
+            <div class="tile" data-key="shift report summary" onclick="go('Shift Report')">
+              <div class="icon">📄</div><h3 id="emp_p6">Shift Report</h3><p id="emp_p6d">End of day summary</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <p class="sectionTitle" id="emp_tasks">Today’s Tasks</p>
+        <p style="margin:0 0 10px;color:var(--muted);font-size:13px" id="emp_welcome">Welcome, <b id="emp_user"></b></p>
+        <div class="list">
+          <div class="item"><div><b id="emp_t1">Complete pending orders</b><div class="m" id="emp_t1d">Pack & prepare for delivery</div></div><span class="badge" id="emp_b1">Orders</span></div>
+          <div class="item"><div><b id="emp_t2">Update stock after sales</b><div class="m" id="emp_t2d">Stock out & adjustments</div></div><span class="badge" id="emp_b2">Stock</span></div>
+          <div class="item"><div><b id="emp_t3">Close shift report</b><div class="m" id="emp_t3d">Cash + bill summary</div></div><span class="badge" id="emp_b3">Report</span></div>
+        </div>
+        <div style="margin-top:12px; display:grid; gap:10px;">
+          <button class="btn btn-ghost" onclick="go('Open POS')" id="emp_openpos">Open POS</button>
+          <button class="btn btn-primary" onclick="go('New Bill')" id="emp_newbill">+ New Bill</button>
+        </div>
+      </div>
+    </div>
+    <div class="footer" id="emp_footer">One platform for every grocery role 🌿</div>
+  </div>
+
+  <!-- CUSTOMER VIEW -->
+  <div id="customerView" class="hidden">
+    <div class="hero">
+      <div class="panel">
+        <div class="searchRow">
+          <input id="search_cus" class="search" placeholder="Search products... (e.g., rice, oil, milk)" oninput="filterTiles('cus')" />
+          <button class="btn btn-ghost" onclick="clearSearch('cus')" id="cus_clear">Clear</button>
+        </div>
+
+        <div class="stats">
+          <div class="stat"><p class="k" id="cus_s1">My Orders</p><p class="v">5</p></div>
+          <div class="stat"><p class="k" id="cus_s2">Cart Items</p><p class="v">2</p></div>
+          <div class="stat"><p class="k" id="cus_s3">Reward Points</p><p class="v">120</p></div>
+        </div>
+
+        <div style="margin-top:14px;">
+          <p class="sectionTitle" id="cus_quick">Quick Actions</p>
+          <div class="grid" id="tileGrid_cus">
+            <div class="tile" data-key="browse products category" onclick="go('Browse Products')">
+              <div class="icon">🛒</div><h3 id="cus_p1">Browse Products</h3><p id="cus_p1d">Explore items by category</p>
+            </div>
+            <div class="tile" data-key="cart checkout" onclick="go('My Cart')">
+              <div class="icon">🧺</div><h3 id="cus_p2">My Cart</h3><p id="cus_p2d">Review items and checkout</p>
+            </div>
+            <div class="tile" data-key="orders tracking delivery" onclick="go('My Orders')">
+              <div class="icon">📦</div><h3 id="cus_p3">My Orders</h3><p id="cus_p3d">Track and manage orders</p>
+            </div>
+            <div class="tile" data-key="address location" onclick="go('My Address')">
+              <div class="icon">📍</div><h3 id="cus_p4">My Address</h3><p id="cus_p4d">Update delivery address</p>
+            </div>
+            <div class="tile" data-key="payment wallet" onclick="go('Payments')">
+              <div class="icon">💳</div><h3 id="cus_p5">Payments</h3><p id="cus_p5d">Cards, cash, wallet options</p>
+            </div>
+            <div class="tile" data-key="support help" onclick="go('Support')">
+              <div class="icon">📞</div><h3 id="cus_p6">Support</h3><p id="cus_p6d">Get help & contact us</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <p class="sectionTitle" id="cus_tasks">Recommended for You</p>
+        <p style="margin:0 0 10px;color:var(--muted);font-size:13px" id="cus_welcome">Welcome, <b id="cus_user"></b></p>
+
+        <div class="list">
+          <div class="item"><div><b id="cus_r1">Fresh Vegetables</b><div class="m" id="cus_r1d">Get today’s fresh items</div></div><span class="badge" id="cus_b1">New</span></div>
+          <div class="item"><div><b id="cus_r2">Weekly Offers</b><div class="m" id="cus_r2d">Save more on groceries</div></div><span class="badge" id="cus_b2">Offer</span></div>
+          <div class="item"><div><b id="cus_r3">Fast Delivery</b><div class="m" id="cus_r3d">Track your order live</div></div><span class="badge" id="cus_b3">Live</span></div>
+        </div>
+
+        <div style="margin-top:12px; display:grid; gap:10px;">
+          <button class="btn btn-ghost" onclick="go('View Offers')" id="cus_offers">View Offers</button>
+          <button class="btn btn-primary" onclick="go('Start Shopping')" id="cus_shop">Start Shopping</button>
+        </div>
+      </div>
+    </div>
+    <div class="footer" id="cus_footer">One platform for every grocery role 🌿</div>
+  </div>
+
+</div>
+
+<script>
+/* ---------------- DEMO DATABASE (localStorage) ----------------
+   This is for frontend demo only. In real project, use backend API.
+   DB structure:
+   - g360_users: [{name, phone, pass, role}]
+   - g360_session: {phone, role}
+   - g360_lang: "en"|"bn"
+--------------------------------------------------------------- */
+
+function getLang(){ return localStorage.getItem("g360_lang") || "en"; }
+function setLang(lang){ localStorage.setItem("g360_lang", lang); }
+
+function getUsers(){
+  try { return JSON.parse(localStorage.getItem("g360_users") || "[]"); }
+  catch { return []; }
+}
+function setUsers(users){
+  localStorage.setItem("g360_users", JSON.stringify(users));
+}
+function setSession(session){
+  localStorage.setItem("g360_session", JSON.stringify(session));
+}
+function getSession(){
+  try { return JSON.parse(localStorage.getItem("g360_session") || "null"); }
+  catch { return null; }
+}
+function clearSession(){
+  localStorage.removeItem("g360_session");
+}
+
+function notify(){ alert("Notifications"); }
+function go(where){ alert("Go to: " + where); }
+function logout(){ clearSession(); location.reload(); }
+
+/* UI helpers */
+function showMsg(text, ok=true){
+  const box = document.getElementById("auth_msg");
+  box.style.display = "block";
+  box.style.background = ok ? "#f0fdf4" : "#fee2e2";
+  box.style.borderColor = ok ? "#bbf7d0" : "#fecaca";
+  box.style.color = ok ? "#14532d" : "#7f1d1d";
+  box.textContent = text;
+}
+function hideMsg(){
+  const box = document.getElementById("auth_msg");
+  box.style.display = "none";
+  box.textContent = "";
+}
+
+/* Tabs */
+function switchTab(which){
+  hideMsg();
+  const loginForm = document.getElementById("loginForm");
+  const signupForm = document.getElementById("signupForm");
+  const tabLogin = document.getElementById("tab_login");
+  const tabSignup = document.getElementById("tab_signup");
+
+  if(which==="login"){
+    loginForm.classList.remove("hidden");
+    signupForm.classList.add("hidden");
+    tabLogin.classList.add("active");
+    tabSignup.classList.remove("active");
+  }else{
+    signupForm.classList.remove("hidden");
+    loginForm.classList.add("hidden");
+    tabSignup.classList.add("active");
+    tabLogin.classList.remove("active");
+  }
+}
+
+/* Validation */
+function isBdPhone(p){
+  const phone = (p||"").trim();
+  // simple BD format demo: 01XXXXXXXXX (11 digits)
+  return /^01\d{9}$/.test(phone);
+}
+
+/* Sign up */
+function signup(){
+  hideMsg();
+  const name = (signup_name.value||"").trim();
+  const phone = (signup_phone.value||"").trim();
+  const pass = (signup_pass.value||"").trim();
+  const role = signup_role.value;
+
+  const bn = getLang()==="bn";
+  if(!name) return showMsg(bn ? "নাম লিখুন" : "Please enter name", false);
+  if(!isBdPhone(phone)) return showMsg(bn ? "সঠিক ফোন নম্বর দিন (01XXXXXXXXX)" : "Enter valid phone (01XXXXXXXXX)", false);
+  if(pass.length < 4) return showMsg(bn ? "পাসওয়ার্ড কমপক্ষে ৪ অক্ষর" : "Password must be at least 4 characters", false);
+  if(!role) return showMsg(bn ? "রোল নির্বাচন করুন" : "Please select role", false);
+
+  const users = getUsers();
+  if(users.some(u => u.phone === phone)){
+    return showMsg(bn ? "এই ফোন নম্বর দিয়ে আগেই একাউন্ট আছে" : "Account already exists with this phone", false);
+  }
+
+  users.push({name, phone, pass, role});
+  setUsers(users);
+
+  showMsg(bn ? "একাউন্ট তৈরি হয়েছে! এখন লগইন করুন ✅" : "Account created! Now login ✅", true);
+  switchTab("login");
+  login_phone.value = phone;
+  login_role.value = role;
+}
+
+/* Login */
+function login(){
+  hideMsg();
+  const phone = (login_phone.value||"").trim();
+  const pass  = (login_pass.value||"").trim();
+  const role  = login_role.value;
+
+  const bn = getLang()==="bn";
+  if(!isBdPhone(phone)) return showMsg(bn ? "সঠিক ফোন নম্বর দিন (01XXXXXXXXX)" : "Enter valid phone (01XXXXXXXXX)", false);
+  if(!pass) return showMsg(bn ? "পাসওয়ার্ড দিন" : "Please enter password", false);
+  if(!role) return showMsg(bn ? "রোল নির্বাচন করুন" : "Please select role", false);
+
+  const users = getUsers();
+  const user = users.find(u => u.phone===phone && u.role===role);
+
+  if(!user || user.pass !== pass){
+    return showMsg(bn ? "ফোন/পাসওয়ার্ড/রোল ভুল" : "Wrong phone/password/role", false);
+  }
+
+  setSession({ phone, role });
+  showViews();
+  applyLang(getLang());
+}
+
+/* Views */
+function showViews(){
+  const s = getSession();
+  const loggedIn = !!s;
+
+  authView.classList.toggle("hidden", loggedIn);
+  shopOwnerView.classList.toggle("hidden", !(loggedIn && s.role==="shop_owner"));
+  employeeView.classList.toggle("hidden", !(loggedIn && s.role==="employee"));
+  customerView.classList.toggle("hidden", !(loggedIn && s.role==="customer"));
+
+  ui_logout.style.display = loggedIn ? "inline-flex" : "none";
+}
+
+/* Search filter */
+function filterTiles(which){
+  const map = { shop:"search_shop", emp:"search_emp", cus:"search_cus" };
+  const grid = { shop:"tileGrid_shop", emp:"tileGrid_emp", cus:"tileGrid_cus" };
+  const q = (document.getElementById(map[which]).value || "").toLowerCase().trim();
+  document.querySelectorAll("#"+grid[which]+" .tile").forEach(t=>{
+    const hay = (t.getAttribute("data-key") + " " + t.innerText).toLowerCase();
+    t.classList.toggle("hidden", q && !hay.includes(q));
+  });
+}
+function clearSearch(which){
+  const map = { shop:"search_shop", emp:"search_emp", cus:"search_cus" };
+  document.getElementById(map[which]).value = "";
+  filterTiles(which);
+}
+
+/* Language dictionary */
+const TEXT = {
+  en:{
+    ui_title:"Grocer 360",
+    ui_sub:"One platform for every grocery role 🌿",
+    ui_notify:"Notifications",
+    ui_logout:"Logout",
+
+    auth_sub:"Login or create a new account",
+    tab_login:"Login",
+    tab_signup:"Sign Up",
+
+    lbl_login_phone:"Phone",
+    lbl_login_pass:"Password",
+    lbl_login_role:"Login As",
+    login_btn:"Login",
+
+    lbl_signup_name:"Full Name",
+    lbl_signup_phone:"Phone",
+    lbl_signup_pass:"Password",
+    lbl_signup_role:"Register As",
+    signup_btn:"Create Account",
+
+    role0:"Select Role",
+    role_shop:"Shop Owner",
+    role_emp:"Employee",
+    role_cus:"Customer",
+
+    // Shop
+    shop_clear:"Clear",
+    shop_s1:"Today Sales", shop_s2:"Low Stock Items", shop_s3:"Pending Orders",
+    shop_quick:"Quick Actions",
+    shop_p1:"Manage Products", shop_p1d:"Add/edit items, barcode, price & stock",
+    shop_p2:"Categories", shop_p2d:"Create & organize product categories",
+    shop_p3:"Sales Report", shop_p3d:"Daily/weekly/monthly sales analytics",
+    shop_p4:"Manage Employees", shop_p4d:"Add staff, set permissions & roles",
+    shop_p5:"Shop Settings", shop_p5d:"Shop info, tax, invoice settings",
+    shop_p6:"Open POS", shop_p6d:"Start billing with fast checkout",
+    shop_tasks:"Today’s Tasks",
+    shop_welcome_prefix:"Welcome, ",
+    shop_t1:"Restock low items", shop_t1d:"Rice, oil, eggs, milk",
+    shop_t2:"Verify cash drawer", shop_t2d:"End-of-day checking",
+    shop_t3:"Review sales summary", shop_t3d:"Compare with yesterday",
+    shop_b1:"Stock", shop_b2:"POS", shop_b3:"Report",
+    shop_orders:"View All Orders",
+    shop_add:"+ Add New Product",
+    shop_footer:"One platform for every grocery role 🌿",
+    shop_search:"Search actions... (e.g., products, report, employees)",
+
+    // Employee
+    emp_clear:"Clear",
+    emp_s1:"Today Bills", emp_s2:"Pending Orders", emp_s3:"Low Stock Alerts",
+    emp_quick:"Quick Actions",
+    emp_p1:"POS / Billing", emp_p1d:"Create invoice & take payments",
+    emp_p2:"Check Stock", emp_p2d:"Search and view product stock",
+    emp_p3:"Update Inventory", emp_p3d:"Stock in/out and adjustments",
+    emp_p4:"Customer Orders", emp_p4d:"View and process orders",
+    emp_p5:"Return & Exchange", emp_p5d:"Handle product return/refund",
+    emp_p6:"Shift Report", emp_p6d:"End of day summary",
+    emp_tasks:"Today’s Tasks",
+    emp_welcome_prefix:"Welcome, ",
+    emp_t1:"Complete pending orders", emp_t1d:"Pack & prepare for delivery",
+    emp_t2:"Update stock after sales", emp_t2d:"Stock out & adjustments",
+    emp_t3:"Close shift report", emp_t3d:"Cash + bill summary",
+    emp_b1:"Orders", emp_b2:"Stock", emp_b3:"Report",
+    emp_openpos:"Open POS",
+    emp_newbill:"+ New Bill",
+    emp_footer:"One platform for every grocery role 🌿",
+    emp_search:"Search actions... (e.g., billing, stock, orders)",
+
+    // Customer
+    cus_clear:"Clear",
+    cus_s1:"My Orders", cus_s2:"Cart Items", cus_s3:"Reward Points",
+    cus_quick:"Quick Actions",
+    cus_p1:"Browse Products", cus_p1d:"Explore items by category",
+    cus_p2:"My Cart", cus_p2d:"Review items and checkout",
+    cus_p3:"My Orders", cus_p3d:"Track and manage orders",
+    cus_p4:"My Address", cus_p4d:"Update delivery address",
+    cus_p5:"Payments", cus_p5d:"Cards, cash, wallet options",
+    cus_p6:"Support", cus_p6d:"Get help & contact us",
+    cus_tasks:"Recommended for You",
+    cus_welcome_prefix:"Welcome, ",
+    cus_r1:"Fresh Vegetables", cus_r1d:"Get today’s fresh items",
+    cus_r2:"Weekly Offers", cus_r2d:"Save more on groceries",
+    cus_r3:"Fast Delivery", cus_r3d:"Track your order live",
+    cus_b1:"New", cus_b2:"Offer", cus_b3:"Live",
+    cus_offers:"View Offers",
+    cus_shop:"Start Shopping",
+    cus_footer:"One platform for every grocery role 🌿",
+    cus_search:"Search products... (e.g., rice, oil, milk)"
+  },
+
+  bn:{
+    ui_title:"Grocer 360",
+    ui_sub:"সব ধরনের গ্রোসারি রোলের জন্য এক প্ল্যাটফর্ম 🌿",
+    ui_notify:"নোটিফিকেশন",
+    ui_logout:"লগআউট",
+
+    auth_sub:"লগইন করুন অথবা নতুন একাউন্ট তৈরি করুন",
+    tab_login:"লগইন",
+    tab_signup:"রেজিস্টার",
+
+    lbl_login_phone:"ফোন",
+    lbl_login_pass:"পাসওয়ার্ড",
+    lbl_login_role:"লগইন করুন",
+    login_btn:"লগইন",
+
+    lbl_signup_name:"পুরো নাম",
+    lbl_signup_phone:"ফোন",
+    lbl_signup_pass:"পাসওয়ার্ড",
+    lbl_signup_role:"রেজিস্টার করুন",
+    signup_btn:"একাউন্ট তৈরি করুন",
+
+    role0:"রোল নির্বাচন করুন",
+    role_shop:"দোকান মালিক",
+    role_emp:"কর্মচারী",
+    role_cus:"গ্রাহক",
+
+    // Shop
+    shop_clear:"মুছুন",
+    shop_s1:"আজকের বিক্রয়", shop_s2:"কম স্টক পণ্য", shop_s3:"অপেক্ষমাণ অর্ডার",
+    shop_quick:"দ্রুত কাজ",
+    shop_p1:"পণ্য ব্যবস্থাপনা", shop_p1d:"পণ্য, বারকোড, দাম ও স্টক আপডেট করুন",
+    shop_p2:"ক্যাটাগরি", shop_p2d:"ক্যাটাগরি তৈরি ও সাজান",
+    shop_p3:"বিক্রয় রিপোর্ট", shop_p3d:"দৈনিক/সাপ্তাহিক/মাসিক বিশ্লেষণ",
+    shop_p4:"কর্মচারী ব্যবস্থাপনা", shop_p4d:"কর্মচারী যোগ ও পারমিশন সেট করুন",
+    shop_p5:"দোকান সেটিংস", shop_p5d:"দোকানের তথ্য, ট্যাক্স, ইনভয়েস সেটিংস",
+    shop_p6:"পিওএস খুলুন", shop_p6d:"দ্রুত চেকআউট দিয়ে বিলিং শুরু করুন",
+    shop_tasks:"আজকের কাজ",
+    shop_welcome_prefix:"স্বাগতম, ",
+    shop_t1:"কম স্টক পণ্য তুলুন", shop_t1d:"চাল, তেল, ডিম, দুধ",
+    shop_t2:"ক্যাশ ড্রয়ার যাচাই", shop_t2d:"দিনশেষে ক্যাশ মিলান",
+    shop_t3:"বিক্রয় সারসংক্ষেপ দেখুন", shop_t3d:"গতকালের সাথে তুলনা করুন",
+    shop_b1:"স্টক", shop_b2:"পিওএস", shop_b3:"রিপোর্ট",
+    shop_orders:"সব অর্ডার দেখুন",
+    shop_add:"+ নতুন পণ্য যোগ করুন",
+    shop_footer:"সব ধরনের গ্রোসারি রোলের জন্য এক প্ল্যাটফর্ম 🌿",
+    shop_search:"অ্যাকশন খুঁজুন... (যেমন: পণ্য, রিপোর্ট, কর্মচারী)",
+
+    // Employee
+    emp_clear:"মুছুন",
+    emp_s1:"আজকের বিল", emp_s2:"অপেক্ষমাণ অর্ডার", emp_s3:"কম স্টক সতর্কতা",
+    emp_quick:"দ্রুত কাজ",
+    emp_p1:"পিওএস / বিলিং", emp_p1d:"ইনভয়েস তৈরি ও পেমেন্ট নিন",
+    emp_p2:"স্টক দেখুন", emp_p2d:"পণ্যের স্টক সার্চ ও দেখুন",
+    emp_p3:"ইনভেন্টরি আপডেট", emp_p3d:"স্টক ইন/আউট ও সমন্বয়",
+    emp_p4:"গ্রাহক অর্ডার", emp_p4d:"অর্ডার দেখুন ও প্রসেস করুন",
+    emp_p5:"রিটার্ন ও এক্সচেঞ্জ", emp_p5d:"ফেরত/রিফান্ড পরিচালনা",
+    emp_p6:"শিফট রিপোর্ট", emp_p6d:"দিনশেষ সারসংক্ষেপ",
+    emp_tasks:"আজকের কাজ",
+    emp_welcome_prefix:"স্বাগতম, ",
+    emp_t1:"অপেক্ষমাণ অর্ডার সম্পন্ন করুন", emp_t1d:"প্যাক করে ডেলিভারির জন্য প্রস্তুত",
+    emp_t2:"বিক্রয়ের পর স্টক আপডেট", emp_t2d:"স্টক আউট ও সমন্বয়",
+    emp_t3:"শিফট রিপোর্ট বন্ধ করুন", emp_t3d:"ক্যাশ + বিল সারসংক্ষেপ",
+    emp_b1:"অর্ডার", emp_b2:"স্টক", emp_b3:"রিপোর্ট",
+    emp_openpos:"পিওএস খুলুন",
+    emp_newbill:"+ নতুন বিল",
+    emp_footer:"সব ধরনের গ্রোসারি রোলের জন্য এক প্ল্যাটফর্ম 🌿",
+    emp_search:"অ্যাকশন খুঁজুন... (যেমন: বিলিং, স্টক, অর্ডার)",
+
+    // Customer
+    cus_clear:"মুছুন",
+    cus_s1:"আমার অর্ডার", cus_s2:"কার্ট আইটেম", cus_s3:"রিওয়ার্ড পয়েন্ট",
+    cus_quick:"দ্রুত কাজ",
+    cus_p1:"পণ্য দেখুন", cus_p1d:"ক্যাটাগরি অনুযায়ী ব্রাউজ করুন",
+    cus_p2:"আমার কার্ট", cus_p2d:"কার্ট রিভিউ করে চেকআউট করুন",
+    cus_p3:"আমার অর্ডার", cus_p3d:"অর্ডার ট্র্যাক ও ম্যানেজ করুন",
+    cus_p4:"আমার ঠিকানা", cus_p4d:"ডেলিভারি ঠিকানা আপডেট করুন",
+    cus_p5:"পেমেন্ট", cus_p5d:"কার্ড, ক্যাশ, ওয়ালেট অপশন",
+    cus_p6:"সাপোর্ট", cus_p6d:"সহায়তা নিন ও যোগাযোগ করুন",
+    cus_tasks:"আপনার জন্য সাজেস্টেড",
+    cus_welcome_prefix:"স্বাগতম, ",
+    cus_r1:"তাজা সবজি", cus_r1d:"আজকের ফ্রেশ আইটেম নিন",
+    cus_r2:"সাপ্তাহিক অফার", cus_r2d:"গ্রোসারিতে আরো সেভ করুন",
+    cus_r3:"দ্রুত ডেলিভারি", cus_r3d:"লাইভ অর্ডার ট্র্যাক করুন",
+    cus_b1:"নতুন", cus_b2:"অফার", cus_b3:"লাইভ",
+    cus_offers:"অফার দেখুন",
+    cus_shop:"শপিং শুরু করুন",
+    cus_footer:"সব ধরনের গ্রোসারি রোলের জন্য এক প্ল্যাটফর্ম 🌿",
+    cus_search:"পণ্য খুঁজুন... (যেমন: চাল, তেল, দুধ)"
+  }
+};
+
+/* Apply language */
+function applyLang(lang){
+  const t = TEXT[lang] || TEXT.en;
+
+  ui_title.textContent = t.ui_title;
+  ui_sub.textContent = t.ui_sub;
+  ui_notify.textContent = t.ui_notify;
+  ui_logout.textContent = t.ui_logout;
+
+  auth_sub.textContent = t.auth_sub;
+  tab_login.textContent = t.tab_login;
+  tab_signup.textContent = t.tab_signup;
+
+  lbl_login_phone.textContent = t.lbl_login_phone;
+  lbl_login_pass.textContent = t.lbl_login_pass;
+  lbl_login_role.textContent = t.lbl_login_role;
+  login_btn.textContent = t.login_btn;
+
+  lbl_signup_name.textContent = t.lbl_signup_name;
+  lbl_signup_phone.textContent = t.lbl_signup_phone;
+  lbl_signup_pass.textContent = t.lbl_signup_pass;
+  lbl_signup_role.textContent = t.lbl_signup_role;
+  signup_btn.textContent = t.signup_btn;
+
+  const loginRole = document.getElementById("login_role");
+  loginRole.options[0].text = t.role0;
+  loginRole.options[1].text = t.role_shop;
+  loginRole.options[2].text = t.role_emp;
+  loginRole.options[3].text = t.role_cus;
+
+  const signupRole = document.getElementById("signup_role");
+  signupRole.options[0].text = t.role0;
+  signupRole.options[1].text = t.role_shop;
+  signupRole.options[2].text = t.role_emp;
+  signupRole.options[3].text = t.role_cus;
+
+  // placeholders
+  login_phone.placeholder = "01XXXXXXXXX";
+  login_pass.placeholder = lang==="bn" ? "পাসওয়ার্ড" : "Password";
+  signup_name.placeholder = lang==="bn" ? "আপনার পুরো নাম" : "Your full name";
+  signup_phone.placeholder = "01XXXXXXXXX";
+  signup_pass.placeholder = lang==="bn" ? "পাসওয়ার্ড" : "Password";
+
+  // Shop
+  shop_clear.textContent=t.shop_clear;
+  shop_s1.textContent=t.shop_s1; shop_s2.textContent=t.shop_s2; shop_s3.textContent=t.shop_s3;
+  shop_quick.textContent=t.shop_quick;
+  shop_p1.textContent=t.shop_p1; shop_p1d.textContent=t.shop_p1d;
+  shop_p2.textContent=t.shop_p2; shop_p2d.textContent=t.shop_p2d;
+  shop_p3.textContent=t.shop_p3; shop_p3d.textContent=t.shop_p3d;
+  shop_p4.textContent=t.shop_p4; shop_p4d.textContent=t.shop_p4d;
+  shop_p5.textContent=t.shop_p5; shop_p5d.textContent=t.shop_p5d;
+  shop_p6.textContent=t.shop_p6; shop_p6d.textContent=t.shop_p6d;
+  shop_tasks.textContent=t.shop_tasks;
+  shop_t1.textContent=t.shop_t1; shop_t1d.textContent=t.shop_t1d;
+  shop_t2.textContent=t.shop_t2; shop_t2d.textContent=t.shop_t2d;
+  shop_t3.textContent=t.shop_t3; shop_t3d.textContent=t.shop_t3d;
+  shop_b1.textContent=t.shop_b1; shop_b2.textContent=t.shop_b2; shop_b3.textContent=t.shop_b3;
+  shop_orders.textContent=t.shop_orders;
+  shop_add.textContent=t.shop_add;
+  shop_footer.textContent=t.shop_footer;
+  search_shop.placeholder=t.shop_search;
+
+  // Employee
+  emp_clear.textContent=t.emp_clear;
+  emp_s1.textContent=t.emp_s1; emp_s2.textContent=t.emp_s2; emp_s3.textContent=t.emp_s3;
+  emp_quick.textContent=t.emp_quick;
+  emp_p1.textContent=t.emp_p1; emp_p1d.textContent=t.emp_p1d;
+  emp_p2.textContent=t.emp_p2; emp_p2d.textContent=t.emp_p2d;
+  emp_p3.textContent=t.emp_p3; emp_p3d.textContent=t.emp_p3d;
+  emp_p4.textContent=t.emp_p4; emp_p4d.textContent=t.emp_p4d;
+  emp_p5.textContent=t.emp_p5; emp_p5d.textContent=t.emp_p5d;
+  emp_p6.textContent=t.emp_p6; emp_p6d.textContent=t.emp_p6d;
+  emp_tasks.textContent=t.emp_tasks;
+  emp_t1.textContent=t.emp_t1; emp_t1d.textContent=t.emp_t1d;
+  emp_t2.textContent=t.emp_t2; emp_t2d.textContent=t.emp_t2d;
+  emp_t3.textContent=t.emp_t3; emp_t3d.textContent=t.emp_t3d;
+  emp_b1.textContent=t.emp_b1; emp_b2.textContent=t.emp_b2; emp_b3.textContent=t.emp_b3;
+  emp_openpos.textContent=t.emp_openpos;
+  emp_newbill.textContent=t.emp_newbill;
+  emp_footer.textContent=t.emp_footer;
+  search_emp.placeholder=t.emp_search;
+
+  // Customer
+  cus_clear.textContent=t.cus_clear;
+  cus_s1.textContent=t.cus_s1; cus_s2.textContent=t.cus_s2; cus_s3.textContent=t.cus_s3;
+  cus_quick.textContent=t.cus_quick;
+  cus_p1.textContent=t.cus_p1; cus_p1d.textContent=t.cus_p1d;
+  cus_p2.textContent=t.cus_p2; cus_p2d.textContent=t.cus_p2d;
+  cus_p3.textContent=t.cus_p3; cus_p3d.textContent=t.cus_p3d;
+  cus_p4.textContent=t.cus_p4; cus_p4d.textContent=t.cus_p4d;
+  cus_p5.textContent=t.cus_p5; cus_p5d.textContent=t.cus_p5d;
+  cus_p6.textContent=t.cus_p6; cus_p6d.textContent=t.cus_p6d;
+  cus_tasks.textContent=t.cus_tasks;
+  cus_r1.textContent=t.cus_r1; cus_r1d.textContent=t.cus_r1d;
+  cus_r2.textContent=t.cus_r2; cus_r2d.textContent=t.cus_r2d;
+  cus_r3.textContent=t.cus_r3; cus_r3d.textContent=t.cus_r3d;
+  cus_b1.textContent=t.cus_b1; cus_b2.textContent=t.cus_b2; cus_b3.textContent=t.cus_b3;
+  cus_offers.textContent=t.cus_offers;
+  cus_shop.textContent=t.cus_shop;
+  cus_footer.textContent=t.cus_footer;
+  search_cus.placeholder=t.cus_search;
+
+  // Welcome names from session
+  const s = getSession();
+  const users = getUsers();
+  const me = s ? users.find(u=>u.phone===s.phone && u.role===s.role) : null;
+  const nm = me?.name || "";
+  shop_user.textContent = nm;
+  emp_user.textContent = nm;
+  cus_user.textContent = nm;
+
+  shop_welcome.childNodes[0].nodeValue = t.shop_welcome_prefix;
+  emp_welcome.childNodes[0].nodeValue = t.emp_welcome_prefix;
+  cus_welcome.childNodes[0].nodeValue = t.cus_welcome_prefix;
+}
+
+/* Language change */
+function setLanguage(lang){
+  setLang(lang);
+  applyLang(lang);
+  document.getElementById("langSel").value = lang;
+}
+
+/* Init */
+(function init(){
+  const savedLang = getLang();
+  document.getElementById("langSel").value = savedLang;
+  showViews();
+  applyLang(savedLang);
+})();
+</script>
+</body>
+</html>
